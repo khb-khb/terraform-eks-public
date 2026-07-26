@@ -1,0 +1,45 @@
+{{- if .Values.keda.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  scaleTargetRef:
+    name: {{ .Release.Name }}
+  minReplicaCount: {{ .Values.keda.minReplicaCount }}
+  maxReplicaCount: {{ .Values.keda.maxReplicaCount }}
+  pollingInterval: {{ .Values.keda.pollingInterval }}
+  cooldownPeriod: {{ .Values.keda.cooldownPeriod }}
+  triggers:
+    {{- if .Values.keda.sqs.enabled }}
+    - type: aws-sqs-queue
+      metadata:
+        queueURL: {{ .Values.keda.sqs.queueURL | quote }}
+        queueLength: {{ .Values.keda.sqs.queueLength | quote }}
+        awsRegion: {{ .Values.keda.sqs.awsRegion | quote }}
+        identityOwner: {{ .Values.keda.sqs.identityOwner | quote }}
+    {{- end }}
+
+    {{- if .Values.keda.cron.enabled }}
+    - type: cron
+      metadata:
+        timezone: {{ .Values.keda.cron.timezone | quote }}
+        start: {{ .Values.keda.cron.start | quote }}
+        end: {{ .Values.keda.cron.end | quote }}
+        desiredReplicas: {{ .Values.keda.cron.desiredReplicas | quote }}
+    {{- end }}
+
+    {{- if .Values.keda.prometheus.enabled }}
+    - type: prometheus
+      metadata:
+        serverAddress: {{ .Values.keda.prometheus.serverAddress | quote }}
+        metricName: {{ .Values.keda.prometheus.metricName | quote }}
+        query: {{ .Values.keda.prometheus.query | quote }}
+        threshold: {{ .Values.keda.prometheus.threshold | quote }}
+        {{- if .Values.keda.prometheus.activationThreshold }}
+        activationThreshold: {{ .Values.keda.prometheus.activationThreshold | quote }}
+        {{- end }}
+    {{- end }}
+{{- end }}

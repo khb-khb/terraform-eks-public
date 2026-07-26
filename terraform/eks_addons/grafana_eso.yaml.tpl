@@ -1,0 +1,27 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: grafana-admin-secret
+  namespace: ${namespace}
+
+spec:
+  refreshInterval: 1m
+
+  secretStoreRef:
+    name: aws-secretsmanager
+    kind: ClusterSecretStore
+
+  target:
+    name: grafana-admin-secret
+    creationPolicy: Owner
+
+  data:
+    - secretKey: admin-user
+      remoteRef:
+        key: grafana-admin
+        property: admin-user
+
+    - secretKey: admin-password
+      remoteRef:
+        key: grafana-admin
+        property: admin-password

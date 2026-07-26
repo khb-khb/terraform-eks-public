@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: apps
+  namespace: argocd
+
+spec:
+  generators:
+    - list:
+        elements:
+          - name: web
+            namespace: web
+          - name: admin
+            namespace: admin
+          - name: admin-api
+            namespace: admin-api
+          - name: keda-consumer
+            namespace: keda-consumer
+          - name: keda-cron
+            namespace: keda-cron
+
+  template:
+    metadata:
+      name: "{{name}}"
+
+    spec:
+      project: default
+
+      source:
+        repoURL: "GIT Repo URL"
+        targetRevision: master
+        path: charts/app
+        helm:
+          valueFiles:
+            - ../../apps/{{name}}/values.yaml
+            - ../../apps/{{name}}/values-prod.yaml
+
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{namespace}}"
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
