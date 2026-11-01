@@ -49,7 +49,8 @@ Cron	설정 시간대에 Pod 3개 확장, 시간 종료 후 0개 축소
 Prometheus	ALB 요청 지표 증가 시 Pod 5개, 감소 시 1개로 조정
 
 
-테스트 설정에는 minReplicaCount: 0, maxReplicaCount: 5, pollingInterval: 10s, cooldownPeriod: 60s를 사용했습니다(트리거별 동작은 개별 검증).
+테스트 설정에는 minReplicaCount: 0, maxReplicaCount: 5, pollingInterval: 10s, cooldownPeriod: 60s를 사용했습니다(트리거별 동작은 개별 검증)
+
 6. 모니터링·알림·로그
 - Prometheus와 Grafana로 Node CPU/Memory, Running/Pending Pod, Replica 및 ALB 지표 확인
 - ALB Target 5XX, CrashLoopBackOff, Pending Pod, Node CPU/Memory 관련 Alert Rule 구성 및 Slack 알림 검증
